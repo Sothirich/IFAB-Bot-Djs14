@@ -4,6 +4,7 @@ const { SpotifyPlugin } = require('@distube/spotify')
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { YtDlpPlugin } = require('@distube/yt-dlp')
 const { DeezerPlugin } = require("@distube/deezer");
+require('dotenv').config();
 
 module.exports = (client) => {
   client.distube = new DisTube(client, {
