@@ -54,7 +54,12 @@ module.exports = (client) => {
             .setThumbnail(song.thumbnail)
             .setFooter({ text: `Requested by: ${song.user.tag}`, iconURL: song.user.displayAvatarURL({ dynamic: true }) })
         ]
-    }).then(msg => { setTimeout(() => msg.delete().catch(e => console.log(e)), (song.duration + "000")) }))
+    }).then(msg => {
+        client.messageDelete.set(queue.textChannel.guildId, {
+            messageId: msg.id
+        })
+    })
+    )
 
     .on('addSong', (queue, song) =>queue.textChannel.send({
         embeds: [new Discord.EmbedBuilder()
@@ -128,6 +133,26 @@ module.exports = (client) => {
     .on('error', (channel, e) => {
         channel.send(`🛑 An ERROR encountered:\n ${e.toString().slice(0, 1974)}`)
         console.error(e)
+    })
+
+    .on('finishSong', queue => {
+        const messageDelete = client.messageDelete.get(queue.textChannel.guildId)
+
+        if (messageDelete) queue.textChannel.messages.fetch(messageDelete.messageId)
+        .then(fetchedMsg => {fetchedMsg.delete()})
+        .catch(console.error);
+
+        client.messageDelete.clear();
+    })
+
+    .on('deleteQueue', queue => {
+        const messageDelete = client.messageDelete.get(queue.textChannel.guildId)
+
+        if (messageDelete) queue.textChannel.messages.fetch(messageDelete.messageId)
+        .then(fetchedMsg => {fetchedMsg.delete()})
+        .catch(console.error);
+        
+        client.messageDelete.clear();
     })
 
     .on('empty', queue => queue.textChannel.send('Voice channel is empty! Leaving the channel...')
