@@ -9,11 +9,10 @@ require('dotenv').config();
 module.exports = (client) => {
   client.distube = new DisTube(client, {
     leaveOnStop: false,
-    emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
     // emitAddListWhenCreatingQueue: false,
+    emptyCooldown: 150,
     youtubeCookie: process.env.Cookie,
-    youtubeIdentityToken: process.env.identityToken,
     plugins: [
         new SpotifyPlugin({
             parallel: false,
@@ -24,7 +23,7 @@ module.exports = (client) => {
             },
         }),
         new YtDlpPlugin({
-            update: true
+            update: false
         }),
         new SoundCloudPlugin(),
         new DeezerPlugin(),
